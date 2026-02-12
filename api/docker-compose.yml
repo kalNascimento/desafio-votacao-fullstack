@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: postgres-db
+    env_file:
+      - .env
+    image: postgres:16
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${PG_DATABASE_DB}
+      POSTGRES_USER: ${PG_DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  api-votacao:
+    build: .
+    container_name: api
+    env_file:
+      - .env
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+    profiles:
+      - api
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
