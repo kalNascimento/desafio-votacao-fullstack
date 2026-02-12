@@ -1,0 +1,46 @@
+package br.com.desafios.kalnascimento.api_votacao.infra.configs;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Configuration
+public class CorsConfig {
+
+    @Value("${spring.application.allowed-origins}")
+    private String allowedOrigins;
+
+    private static final List<String> ALLOWED_METHODS = List.of(
+            "GET", "POST", "PUT", "DELETE", "OPTIONS"
+    );
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        var origins = Arrays.stream(allowedOrigins.split(",")).toList();
+
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(origins);
+        config.setAllowedMethods(ALLOWED_METHODS);
+        config.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type"
+        ));
+        config.setExposedHeaders(List.of(
+                "Authorization"
+        ));
+
+        config.setAllowCredentials(false);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+}
