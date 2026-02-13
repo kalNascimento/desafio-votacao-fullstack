@@ -5,20 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
 @Getter
 @Setter
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_pauta")
 public class Pauta extends BaseEntity {
-
-    @Id
-    @GeneratedValue
-    private UUID id;
 
     @Column(name = "nome", nullable = false, length = 50)
     private String nome;

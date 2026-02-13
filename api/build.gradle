@@ -32,6 +32,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-flyway:4.0.2'
 	implementation 'org.postgresql:postgresql:42.7.3'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
+	implementation 'com.github.f4b6a3:uuid-creator:5.3.3'
 
 	runtimeOnly 'org.flywaydb:flyway-database-postgresql:12.0.1'
 

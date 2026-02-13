@@ -1,6 +1,9 @@
 spring:
   application:
     name: api
+  messages:
+    basename: messages
+    encoding: UTF-8
   profiles:
     active: ${SPRING_PROFILE_ACTIVE}
 

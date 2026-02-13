@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tb_sessao_votacao (
     data_hora_criacao TIMESTAMP NOT NULL,
     data_hora_finalizacao TIMESTAMP NOT NULL,
     status VARCHAR(15),
-    version INT NOT NULL,
+    version INT,
     CONSTRAINT fk_pauta
         FOREIGN KEY (id_pauta) REFERENCES tb_pauta(id)
 );

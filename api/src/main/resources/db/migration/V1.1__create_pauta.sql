@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS tb_pauta (
     nome VARCHAR(50) NOT NULL,
     descricao VARCHAR(150),
     data_hora_criacao TIMESTAMP NOT NULL,
-    version INT NOT NULL
+    version INT
 )
