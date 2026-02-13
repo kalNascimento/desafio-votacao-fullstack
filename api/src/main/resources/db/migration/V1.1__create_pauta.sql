@@ -1,7 +1,8 @@
 
 CREATE TABLE IF NOT EXISTS tb_pauta (
     id UUID PRIMARY KEY,
-    nome VARCHAR(50),
+    nome VARCHAR(50) NOT NULL,
     descricao VARCHAR(150),
-    data_hora_criacao TIMESTAMP NOT NULL
+    data_hora_criacao TIMESTAMP NOT NULL,
+    version INT NOT NULL
 )
