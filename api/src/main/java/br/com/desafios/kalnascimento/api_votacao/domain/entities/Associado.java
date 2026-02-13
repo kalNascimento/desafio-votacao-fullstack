@@ -5,21 +5,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
 @Getter
 @Setter
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_associado")
 public class Associado extends BaseEntity {
-
-    @Id
-    @UuidGenerator(style = UuidGenerator.Style.TIME)
-    private UUID id;
 
     @Column(name = "cpf", length = 11, nullable = false)
     private String cpf;
