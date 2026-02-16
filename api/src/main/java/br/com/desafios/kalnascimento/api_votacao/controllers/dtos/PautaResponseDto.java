@@ -9,9 +9,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class PautaComboDto {
+public class PautaResponseDto {
 
     UUID id;
 
     String nome;
+
+    String descricao;
 }

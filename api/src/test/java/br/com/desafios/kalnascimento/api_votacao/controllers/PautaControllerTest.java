@@ -1,10 +1,12 @@
 package br.com.desafios.kalnascimento.api_votacao.controllers;
 
 import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.UUID;
@@ -24,9 +26,6 @@ import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarPautaRequ
 import br.com.desafios.kalnascimento.api_votacao.domain.entities.Pauta;
 import br.com.desafios.kalnascimento.api_votacao.domain.repositories.PautaRepository;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -39,6 +38,11 @@ class PautaControllerTest {
     private PautaRepository pautaRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeEach
+    void clean() {
+        pautaRepository.deleteAll();
+    }
 
     @BeforeEach
     void setup() {

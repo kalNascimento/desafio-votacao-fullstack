@@ -2,15 +2,21 @@ package br.com.desafios.kalnascimento.api_votacao.controllers;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarPautaRequestDto;
-import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarSessaoVotacaoDto;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarSessaoVotacaoRequestDto;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboResponseDto;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.SessaoVotacaoResponseDto;
 import br.com.desafios.kalnascimento.api_votacao.domain.services.SessaoVotacaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/sessao-votacao")
 @RequiredArgsConstructor
-public class SessaoVotacaoController implements  BaseController {
+public class SessaoVotacaoController implements BaseController {
 
     private final SessaoVotacaoService sessaoVotacaoService;
 
@@ -42,10 +48,38 @@ public class SessaoVotacaoController implements  BaseController {
             ),
     })
     @PostMapping
-    public ResponseEntity<UUID> criarSessaoVotacao(@Valid @RequestBody CriarSessaoVotacaoDto dto) {
+    public ResponseEntity<UUID> criarSessaoVotacao(@Valid @RequestBody CriarSessaoVotacaoRequestDto dto) {
 
         var response = sessaoVotacaoService.criarSessaoVotacao(dto);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @Operation(
+            summary = "Listar sessão de votação para combo.",
+            description = "Lista sessão de votação para a escolha na votação."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista todas as sessão de votação para seleção.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PautaComboResponseDto.class)
+                    )
+            ),
+    })
+    @GetMapping
+    public ResponseEntity<Page<SessaoVotacaoResponseDto>> listarSessoesVotacao(
+            @PageableDefault(
+                    size = 10,
+                    sort = "dataHoraFinalizacao",
+                    direction = Sort.Direction.ASC
+            ) Pageable pageable
+    ) {
+
+        var response = sessaoVotacaoService.listarSessoesVotacao(pageable);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

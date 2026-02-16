@@ -6,8 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarPautaRequestDto;
-import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboDto;
-import br.com.desafios.kalnascimento.api_votacao.domain.entities.Pauta;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboResponseDto;
 import br.com.desafios.kalnascimento.api_votacao.domain.repositories.PautaRepository;
 import br.com.desafios.kalnascimento.api_votacao.infra.mappers.PautaMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class PautaService {
         return novaPauta.getId();
     }
 
-    public List<PautaComboDto> listarPautasCombo() {
+    public List<PautaComboResponseDto> listarPautasCombo() {
         return pautaRepository.findAll().stream()
                 .map(pautaMapper::toDto)
                 .toList();

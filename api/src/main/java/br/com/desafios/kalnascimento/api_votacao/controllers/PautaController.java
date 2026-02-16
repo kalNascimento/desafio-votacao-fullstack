@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarPautaRequestDto;
-import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboDto;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboResponseDto;
 import br.com.desafios.kalnascimento.api_votacao.domain.services.PautaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -62,12 +62,12 @@ public class PautaController implements BaseController {
                     description = "Lista todas as pautas para seleção.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = PautaComboDto.class)
+                            schema = @Schema(implementation = PautaComboResponseDto.class)
                     )
             ),
     })
     @GetMapping
-    public ResponseEntity<List<PautaComboDto>> listarPautasCombo() {
+    public ResponseEntity<List<PautaComboResponseDto>> listarPautasCombo() {
 
         var response = pautaService.listarPautasCombo();
 
