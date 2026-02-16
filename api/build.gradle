@@ -50,6 +50,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testImplementation 'org.flywaydb:flyway-core:11.19.1'
 	testImplementation 'com.h2database:h2'
+	testImplementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
