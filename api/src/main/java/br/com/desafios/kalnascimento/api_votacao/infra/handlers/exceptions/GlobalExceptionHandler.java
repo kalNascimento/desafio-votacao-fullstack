@@ -1,16 +1,16 @@
-package br.com.desafios.kalnascimento.api_votacao.controllers;
+package br.com.desafios.kalnascimento.api_votacao.infra.handlers.exceptions;
 
-import br.com.desafios.kalnascimento.api_votacao.domain.exceptions.RegraNegocioExeption;
-import br.com.desafios.kalnascimento.api_votacao.infra.dtos.ErrorResponseDto;
-import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import br.com.desafios.kalnascimento.api_votacao.infra.handlers.dtos.ErrorResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
