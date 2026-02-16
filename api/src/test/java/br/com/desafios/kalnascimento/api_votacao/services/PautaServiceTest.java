@@ -1,10 +1,12 @@
 package br.com.desafios.kalnascimento.api_votacao.services;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarPautaRequestDto;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboDto;
 import br.com.desafios.kalnascimento.api_votacao.domain.entities.Pauta;
 import br.com.desafios.kalnascimento.api_votacao.domain.repositories.PautaRepository;
 import br.com.desafios.kalnascimento.api_votacao.domain.services.PautaService;
@@ -92,5 +95,46 @@ public class PautaServiceTest {
 
         assertEquals(dto.nome(), pautaCapturada.getNome());
         assertEquals(dto.descricao(), pautaCapturada.getDescricao());
+    }
+
+    @Test
+    void deveListarPautasCombo() {
+
+        Pauta pauta1 = Pauta.builder()
+                .id(UUID.randomUUID())
+                .nome("Pauta 1")
+                .build();
+
+        Pauta pauta2 = Pauta.builder()
+                .id(UUID.randomUUID())
+                .nome("Pauta 2")
+                .build();
+
+        List<Pauta> pautas = List.of(pauta1, pauta2);
+
+        PautaComboDto dto1 = PautaComboDto.builder()
+                .id(pauta1.getId())
+                .nome("Pauta 1")
+                .build();
+
+        PautaComboDto dto2 = PautaComboDto.builder()
+                .id(pauta2.getId())
+                .nome("Pauta 2")
+                .build();
+
+        when(pautaRepository.findAll()).thenReturn(pautas);
+        when(pautaMapper.toDto(pauta1)).thenReturn(dto1);
+        when(pautaMapper.toDto(pauta2)).thenReturn(dto2);
+
+        List<PautaComboDto> resultado = pautaService.listarPautasCombo();
+
+        assertNotNull(resultado);
+        assertEquals(2, resultado.size());
+        assertEquals(dto1, resultado.get(0));
+        assertEquals(dto2, resultado.get(1));
+
+        verify(pautaRepository).findAll();
+        verify(pautaMapper).toDto(pauta1);
+        verify(pautaMapper).toDto(pauta2);
     }
 }
