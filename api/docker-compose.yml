@@ -2,7 +2,6 @@ version: "3.9"
 
 services:
   postgres:
-    container_name: postgres-db
     env_file:
       - .env
     image: postgres:16
@@ -20,7 +19,6 @@ services:
 
   api-votacao:
     build: .
-    container_name: api
     env_file:
       - .env
     ports:
