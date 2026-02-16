@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarPautaRequestDto;
-import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboDto;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboResponseDto;
 import br.com.desafios.kalnascimento.api_votacao.domain.entities.Pauta;
 
 @Mapper(componentModel = "spring")
@@ -15,5 +15,5 @@ public interface PautaMapper {
     @Mapping(target = "version", ignore = true)
     Pauta toEntity(CriarPautaRequestDto pauta);
 
-    PautaComboDto toDto(Pauta pauta);
+    PautaComboResponseDto toDto(Pauta pauta);
 }

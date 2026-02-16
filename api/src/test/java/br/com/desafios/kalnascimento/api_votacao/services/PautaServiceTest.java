@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarPautaRequestDto;
-import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboDto;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboResponseDto;
 import br.com.desafios.kalnascimento.api_votacao.domain.entities.Pauta;
 import br.com.desafios.kalnascimento.api_votacao.domain.repositories.PautaRepository;
 import br.com.desafios.kalnascimento.api_votacao.domain.services.PautaService;
@@ -112,12 +112,12 @@ public class PautaServiceTest {
 
         List<Pauta> pautas = List.of(pauta1, pauta2);
 
-        PautaComboDto dto1 = PautaComboDto.builder()
+        PautaComboResponseDto dto1 = PautaComboResponseDto.builder()
                 .id(pauta1.getId())
                 .nome("Pauta 1")
                 .build();
 
-        PautaComboDto dto2 = PautaComboDto.builder()
+        PautaComboResponseDto dto2 = PautaComboResponseDto.builder()
                 .id(pauta2.getId())
                 .nome("Pauta 2")
                 .build();
@@ -126,7 +126,7 @@ public class PautaServiceTest {
         when(pautaMapper.toDto(pauta1)).thenReturn(dto1);
         when(pautaMapper.toDto(pauta2)).thenReturn(dto2);
 
-        List<PautaComboDto> resultado = pautaService.listarPautasCombo();
+        List<PautaComboResponseDto> resultado = pautaService.listarPautasCombo();
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());

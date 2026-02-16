@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record CriarSessaoVotacaoDto(
+public record CriarSessaoVotacaoRequestDto(
 
         @NotNull
         UUID idPauta,

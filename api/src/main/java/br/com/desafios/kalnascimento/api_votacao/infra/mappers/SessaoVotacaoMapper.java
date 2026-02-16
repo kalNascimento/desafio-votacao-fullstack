@@ -5,7 +5,8 @@ import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarSessaoVotacaoDto;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarSessaoVotacaoRequestDto;
+import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.SessaoVotacaoResponseDto;
 import br.com.desafios.kalnascimento.api_votacao.domain.entities.Pauta;
 import br.com.desafios.kalnascimento.api_votacao.domain.entities.SessaoVotacao;
 
@@ -18,7 +19,9 @@ public interface SessaoVotacaoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dataHoraCriacao", ignore = true)
     @Mapping(target = "version", ignore = true)
-    SessaoVotacao toEntity(CriarSessaoVotacaoDto dto);
+    SessaoVotacao toEntity(CriarSessaoVotacaoRequestDto dto);
+
+    SessaoVotacaoResponseDto toDto(SessaoVotacao sessaoVotacao);
 
     default Pauta pautaFromId(UUID id) {
         if (id == null) return null;
