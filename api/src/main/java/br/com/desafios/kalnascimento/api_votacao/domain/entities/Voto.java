@@ -1,12 +1,13 @@
 package br.com.desafios.kalnascimento.api_votacao.domain.entities;
 
+import br.com.desafios.kalnascimento.api_votacao.domain.enums.VotoEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,10 +37,9 @@ public class Voto extends BaseEntity {
     )
     private Associado associado;
 
-    @NotBlank
-    @Size(max = 10)
-    @Column(name = "voto", nullable = false, length = 10)
-    private String voto;
+    @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private VotoEnum voto;
 
 }
 

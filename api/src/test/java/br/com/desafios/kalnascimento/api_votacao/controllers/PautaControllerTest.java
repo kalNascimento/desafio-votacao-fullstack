@@ -41,13 +41,11 @@ class PautaControllerTest {
 
     @BeforeEach
     void clean() {
-        pautaRepository.deleteAll();
+        pautaRepository.deleteAllInBatch();
     }
 
     @BeforeEach
     void setup() {
-        pautaRepository.deleteAll();
-
         Pauta pauta = Pauta.builder()
                 .id(UUID.randomUUID())
                 .nome("Pauta teste")

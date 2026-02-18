@@ -9,13 +9,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.CriarSessaoVotacaoRequestDto;
-import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaComboResponseDto;
 import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.SessaoVotacaoResponseDto;
 import br.com.desafios.kalnascimento.api_votacao.domain.services.SessaoVotacaoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,7 +57,7 @@ public class SessaoVotacaoController implements BaseController {
     }
 
     @Operation(
-            summary = "Listar sessão de votação para combo.",
+            summary = "Listar sessão de votação.",
             description = "Lista sessão de votação para a escolha na votação."
     )
     @ApiResponses({
@@ -65,7 +66,7 @@ public class SessaoVotacaoController implements BaseController {
                     description = "Lista todas as sessão de votação para seleção.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = PautaComboResponseDto.class)
+                            schema = @Schema(implementation = SessaoVotacaoResponseDto.class)
                     )
             ),
     })
@@ -81,5 +82,23 @@ public class SessaoVotacaoController implements BaseController {
         var response = sessaoVotacaoService.listarSessoesVotacao(pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Finzaliar uma sessão de votação.",
+            description = "Finaliza uma sessão de votação encerrando a pauta."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Sessão finalizada com sucesso."
+            ),
+    })
+    @PatchMapping("/finalizar/{id}")
+    public ResponseEntity<Void> finalizarSessao(@PathVariable UUID id) {
+
+        sessaoVotacaoService.finalizarSessaoVotacao(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

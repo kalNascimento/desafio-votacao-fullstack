@@ -3,6 +3,7 @@ package br.com.desafios.kalnascimento.api_votacao.controllers;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,31 +48,29 @@ public class SessaoVotacaoControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule());
 
-    private UUID pautaId;
+    private Pauta pauta;
 
     @BeforeEach
     void clean() {
-        sessaoVotacaoRepository.deleteAll();
-        pautaRepository.deleteAll();
+        sessaoVotacaoRepository.deleteAllInBatch();
+        pautaRepository.deleteAllInBatch();
     }
 
     @BeforeEach
     void setup() {
-        Pauta pauta = Pauta.builder()
+        Pauta pautaSalva = Pauta.builder()
                 .nome("Pauta teste")
                 .descricao("Pauta descrição")
                 .build();
 
-        pautaRepository.save(pauta);
-
-        pautaId = pauta.getId();
+        pauta = pautaRepository.save(pautaSalva);
     }
 
     @Test
     void deveCriarSessaoComSucesso() throws Exception {
 
         CriarSessaoVotacaoRequestDto request = CriarSessaoVotacaoRequestDto.builder()
-                .idPauta(pautaId)
+                .idPauta(pauta.getId())
                 .dataHoraFinalizacao(LocalDateTime.now())
                 .build();
 
@@ -86,7 +85,7 @@ public class SessaoVotacaoControllerTest {
     void deveCriarSessaoComSucessoQuandoDataHoraNaoInformada() throws Exception {
 
         CriarSessaoVotacaoRequestDto request = CriarSessaoVotacaoRequestDto.builder()
-                .idPauta(pautaId)
+                .idPauta(pauta.getId())
                 .build();
 
         mockMvc.perform(post("/sessao-votacao")
@@ -99,18 +98,13 @@ public class SessaoVotacaoControllerTest {
     @Test
     void deveListarSessoesVotacaoComSucesso() throws Exception {
 
-        SessaoVotacao sessao1 = SessaoVotacao.builder()
-                .pauta(Pauta.builder()
-                        .id(pautaId)
-                        .nome("teste")
-                        .descricao("teste")
-                        .build())
+        SessaoVotacao sesssao = SessaoVotacao.builder()
+                .pauta(pauta)
                 .status(SessaoVotacaoStatusEnum.EM_ANDAMENTO)
                 .dataHoraFinalizacao(LocalDateTime.now().plusMinutes(1))
                 .build();
 
-
-        sessaoVotacaoRepository.save(sessao1);
+        sessaoVotacaoRepository.save(sesssao);
 
         mockMvc.perform(get("/sessao-votacao")
                         .param("page", "0")
@@ -120,5 +114,45 @@ public class SessaoVotacaoControllerTest {
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.content[0].pauta.id").exists());
+    }
+
+    @Test
+    void deveFinalizarSessaoComSucesso() throws Exception {
+
+        SessaoVotacao sessaoVotacao = SessaoVotacao.builder()
+                .pauta(pauta)
+                .status(SessaoVotacaoStatusEnum.EM_ANDAMENTO)
+                .dataHoraFinalizacao(LocalDateTime.now().plusMinutes(1))
+                .build();
+
+        var idSessao = sessaoVotacaoRepository.save(sessaoVotacao).getId();
+
+        mockMvc.perform(patch("/sessao-votacao/finalizar/" + idSessao)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void deveResultarEmServerError() throws Exception {
+        var idSessao = UUID.randomUUID();
+
+        mockMvc.perform(patch("/sessao-votacao/finalizar/" + idSessao)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
+    }
+
+    @Test
+    void deveResultarEmBadRequest() throws Exception {
+        SessaoVotacao sessaoVotacao = SessaoVotacao.builder()
+                .pauta(pauta)
+                .status(SessaoVotacaoStatusEnum.FINALIZADA)
+                .dataHoraFinalizacao(LocalDateTime.now().plusMinutes(1))
+                .build();
+
+        var idSessao = sessaoVotacaoRepository.save(sessaoVotacao).getId();
+
+        mockMvc.perform(patch("/sessao-votacao/finalizar/" + idSessao)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }
