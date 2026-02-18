@@ -15,9 +15,9 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RegraNegocioExeption.class)
+    @ExceptionHandler(RegraNegocioException.class)
     public ResponseEntity<ErrorResponseDto> handleBusinessException(
-            RegraNegocioExeption ex,
+            RegraNegocioException ex,
             HttpServletRequest request) {
 
         ErrorResponseDto error = new ErrorResponseDto(

@@ -2,12 +2,16 @@ package br.com.desafios.kalnascimento.api_votacao.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +30,14 @@ import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.PautaResponseD
 import br.com.desafios.kalnascimento.api_votacao.controllers.dtos.SessaoVotacaoResponseDto;
 import br.com.desafios.kalnascimento.api_votacao.domain.entities.Pauta;
 import br.com.desafios.kalnascimento.api_votacao.domain.entities.SessaoVotacao;
+import br.com.desafios.kalnascimento.api_votacao.domain.enums.SessaoVotacaoStatusEnum;
+import br.com.desafios.kalnascimento.api_votacao.domain.enums.VotoEnum;
 import br.com.desafios.kalnascimento.api_votacao.domain.repositories.SessaoVotacaoRepository;
+import br.com.desafios.kalnascimento.api_votacao.domain.repositories.VotoRespository;
 import br.com.desafios.kalnascimento.api_votacao.domain.services.SessaoVotacaoService;
+import br.com.desafios.kalnascimento.api_votacao.domain.validators.SessaoVotacaoValidator;
 import br.com.desafios.kalnascimento.api_votacao.infra.mappers.SessaoVotacaoMapper;
+import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class SessaoVotacaoServiceTest {
@@ -38,6 +47,12 @@ class SessaoVotacaoServiceTest {
 
     @Mock
     private SessaoVotacaoMapper sessaoVotacaoMapper;
+
+    @Mock
+    private VotoRespository votoRespository;
+
+    @Mock
+    private SessaoVotacaoValidator sessaoVotacaoValidator;
 
     @InjectMocks
     private SessaoVotacaoService service;
@@ -161,5 +176,93 @@ class SessaoVotacaoServiceTest {
         verify(sessaoVotacaoRepository).findAll(pageable);
         verify(sessaoVotacaoMapper).toDto(sessao1);
         verify(sessaoVotacaoMapper).toDto(sessao2);
+    }
+
+    @Test
+    void deveFinalizarSessaoComVotoAceitarVencedor() {
+
+        UUID id = UUID.randomUUID();
+
+        Pauta pauta = Pauta.builder()
+                .id(UUID.randomUUID())
+                .build();
+
+        SessaoVotacao sessao = SessaoVotacao.builder()
+                .id(id)
+                .pauta(pauta)
+                .build();
+
+        when(sessaoVotacaoRepository.findById(id)).thenReturn(Optional.of(sessao));
+        when(votoRespository.countByPautaAndVoto(pauta, VotoEnum.ACEITAR)).thenReturn(10L);
+        when(votoRespository.countByPautaAndVoto(pauta, VotoEnum.DECLINAR)).thenReturn(5L);
+
+        service.finalizarSessaoVotacao(id);
+
+        assertEquals(SessaoVotacaoStatusEnum.FINALIZADA, sessao.getStatus());
+        assertEquals(VotoEnum.ACEITAR, sessao.getVotoVencedor());
+
+        verify(sessaoVotacaoRepository).save(sessao);
+    }
+
+    @Test
+    void deveFinalizarSessaoComVotoDeclinarVencedor() {
+
+        UUID id = UUID.randomUUID();
+
+        Pauta pauta = Pauta.builder()
+                .id(UUID.randomUUID())
+                .build();
+
+        SessaoVotacao sessao = SessaoVotacao.builder()
+                .id(id)
+                .pauta(pauta)
+                .build();
+
+        when(sessaoVotacaoRepository.findById(id)).thenReturn(Optional.of(sessao));
+        when(votoRespository.countByPautaAndVoto(pauta, VotoEnum.ACEITAR)).thenReturn(3L);
+        when(votoRespository.countByPautaAndVoto(pauta, VotoEnum.DECLINAR)).thenReturn(7L);
+
+        service.finalizarSessaoVotacao(id);
+
+        assertEquals(SessaoVotacaoStatusEnum.FINALIZADA, sessao.getStatus());
+        assertEquals(VotoEnum.DECLINAR, sessao.getVotoVencedor());
+
+        verify(sessaoVotacaoRepository).save(sessao);
+    }
+
+    @Test
+    void deveRetornarDeclinarEmCasoDeEmpate() {
+
+        UUID id = UUID.randomUUID();
+
+        Pauta pauta = Pauta.builder()
+                .id(UUID.randomUUID())
+                .build();
+
+        SessaoVotacao sessao = SessaoVotacao.builder()
+                .id(id)
+                .pauta(pauta)
+                .build();
+
+        when(sessaoVotacaoRepository.findById(id)).thenReturn(Optional.of(sessao));
+        when(votoRespository.countByPautaAndVoto(pauta, VotoEnum.ACEITAR)).thenReturn(5L);
+        when(votoRespository.countByPautaAndVoto(pauta, VotoEnum.DECLINAR)).thenReturn(5L);
+
+        service.finalizarSessaoVotacao(id);
+
+        assertEquals(VotoEnum.DECLINAR, sessao.getVotoVencedor());
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoSessaoNaoEncontrada() {
+
+        UUID id = UUID.randomUUID();
+
+        when(sessaoVotacaoRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> service.finalizarSessaoVotacao(id));
+
+        verify(sessaoVotacaoRepository, never()).save(any());
     }
 }

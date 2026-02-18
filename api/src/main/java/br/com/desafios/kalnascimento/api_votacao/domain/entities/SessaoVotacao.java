@@ -3,6 +3,7 @@ package br.com.desafios.kalnascimento.api_votacao.domain.entities;
 import java.time.LocalDateTime;
 
 import br.com.desafios.kalnascimento.api_votacao.domain.enums.SessaoVotacaoStatusEnum;
+import br.com.desafios.kalnascimento.api_votacao.domain.enums.VotoEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,8 +31,9 @@ public class SessaoVotacao extends BaseEntity {
     @JoinColumn(name = "id_pauta", nullable = false, unique = true, foreignKey = @ForeignKey(name = "fk_pauta"))
     private Pauta pauta;
 
-    @Column(name = "voto_vencedor", length = 10)
-    private String votoVencedor;
+    @Column(name = "voto_vencedor", length = 20)
+    @Enumerated(EnumType.STRING)
+    private VotoEnum votoVencedor;
 
     @Column(nullable = false, length = 30)
     @Enumerated(EnumType.STRING)
