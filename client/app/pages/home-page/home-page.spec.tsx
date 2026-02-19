@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { Welcome } from '~/welcome/welcome'
+import { Welcome } from '~/home-page/welcome'
 
 describe('Welcome component', () => {
 

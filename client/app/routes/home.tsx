@@ -1,5 +1,5 @@
+import { HomePage } from "~/pages/home-page/home-page";
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +8,14 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home() {
-  return <Welcome />;
+export default function Root() {
+  return (
+    <>
+      <header></header>
+      <div className="p-4 lg:p-16">
+        <HomePage />
+      </div>
+      <footer></footer>
+    </>
+  );
 }
