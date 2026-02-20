@@ -1,14 +1,8 @@
+import { TableColumn } from '~/types/table-column';
 import { Button } from "../ui/button";
 
-type Column<T> = {
-  key: keyof T | string;
-  header: string;
-  className?: string;
-  render?: (row: T) => React.ReactNode;
-};
-
-type TableProps<T> = {
-  columns: Column<T>[];
+interface TableProps<T> {
+  columns: TableColumn<T>[];
   data: T[];
 };
 
