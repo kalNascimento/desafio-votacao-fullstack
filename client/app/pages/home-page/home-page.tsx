@@ -1,39 +1,55 @@
 import { Button } from "~/components/ui/button";
 import { SectionForm } from "~/components/layout/section-form";
 import { Table } from "~/components/layout/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { criarPauta } from "~/services/pauta.service";
 import { FormCriarPauta } from '~/components/layout/form-criar-pauta';
+import { FormCriarSessao } from '~/components/layout/form-criar-sessao';
+import { criarSessao, listarSessao } from '~/services/sessao.service';
+import { TableColumn } from '~/types/table-column';
+import { SessaoVotacaoResponse } from '~/types/sessao-votacao.response';
+import { CriarSessaoVotacaoRequest } from '~/types/criar-sessao-votacao.request';
+import { CriarPautaRequest } from '~/types/criar-pauta.request';
 
 export function HomePage() {
-  const [open, setOpen] = useState(false);
+  const [openPauta, setOpenPauta] = useState(false);
+  const [openSessao, setOpenSessao] = useState(false);
+  const [sessoes, setSessoes] = useState<SessaoVotacaoResponse[]>([])
 
-  const data = [
-    { id: 1, nome: "Sessão 1", descricao: "Descrição 1" },
-    { id: 2, nome: "Sessão 2", descricao: "Descrição 2" },
-  ];
+  useEffect(() => {
+    listarSessao({ page: 0, size: 10 }).then(res => setSessoes(res.data.content))
+  }, [])
 
-  async function handleCreate(data: { nome: string; descricao: string }) {
+  async function handleCreatePauta(data: CriarPautaRequest) {
     await criarPauta(data);
 
-    setOpen(false);
+    setOpenPauta(false);
   }
 
-  const columns = [
+  async function handleCreateSessao(data: CriarSessaoVotacaoRequest) {
+    await criarSessao(data);
+    listarSessao({ page: 0, size: 10 }).then(res => setSessoes(res.data.content))
+    setOpenSessao(false);
+  }
+
+  const columns: TableColumn<SessaoVotacaoResponse>[] = [
     {
-      key: "id",
+      key: "pauta.id",
       header: "ID",
-      className: "col-span-2 text-left",
+      className: "col-span-4 text-left",
+      render: (row) => row.pauta.id,
     },
     {
-      key: "nome",
+      key: "pauta.nome",
       header: "Nome",
-      className: "col-span-3 text-left",
+      className: "col-span-2 text-left",
+      render: (row) => row.pauta.nome,
     },
     {
-      key: "descricao",
+      key: "pauta.descricao",
       header: "Descrição",
-      className: "col-span-5 text-left",
+      className: "col-span-4 text-left",
+      render: (row) => row.pauta.descricao,
     },
     {
       key: "acoes",
@@ -48,19 +64,29 @@ export function HomePage() {
       <SectionForm
         titulo="Pauta"
         buttonConteudo="Criar pauta"
-        visible={open}
-        onVisibleChange={setOpen}
+        visible={openPauta}
+        onVisibleChange={setOpenPauta}
         modalConteudo={
           <FormCriarPauta
-            onSubmit={handleCreate}
-            onCancel={() => setOpen(false)}
+            onSubmit={handleCreatePauta}
+            onCancel={() => setOpenPauta(false)}
           />
         }
       />
 
       <hr className="w-full border-2 border-primary-3 my-4" />
 
-      <SectionForm titulo="Sessao" buttonConteudo="Abrir uma sessão" />
+      <SectionForm
+        titulo="Sessao"
+        buttonConteudo="Abrir uma sessão"
+        visible={openSessao}
+        onVisibleChange={setOpenSessao}
+        modalConteudo={<FormCriarSessao
+          onSubmit={handleCreateSessao}
+          onCancel={() => setOpenSessao(false)}
+        />
+        }
+      />
 
       <hr className="w-full border-2 border-primary-3 my-4" />
 
@@ -68,7 +94,7 @@ export function HomePage() {
         Lista de sessões abertas
       </h2>
 
-      <Table columns={columns} data={data} />
+      <Table columns={columns} data={sessoes} />
     </main>
   );
 }
