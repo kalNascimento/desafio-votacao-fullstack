@@ -4,43 +4,37 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class CorsConfig {
+public class CorsConfig implements WebMvcConfigurer {
 
     @Value("${spring.application.allowed-origins}")
     private String allowedOrigins;
 
     private static final List<String> ALLOWED_METHODS = List.of(
-            "GET", "POST", "PUT", "DELETE", "OPTIONS"
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "PATCH",
+            "OPTIONS"
     );
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        var origins = Arrays.stream(allowedOrigins.split(",")).toList();
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
 
-        CorsConfiguration config = new CorsConfiguration();
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .toList();
 
-        config.setAllowedOrigins(origins);
-        config.setAllowedMethods(ALLOWED_METHODS);
-        config.setAllowedHeaders(List.of(
-                "Authorization",
-                "Content-Type"
-        ));
-        config.setExposedHeaders(List.of(
-                "Authorization"
-        ));
-
-        config.setAllowCredentials(false);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
+        registry.addMapping("/**")
+                .allowedOrigins(origins.toArray(new String[0]))
+                .allowedMethods(ALLOWED_METHODS.toArray(new String[0]))
+                .allowedHeaders("*")
+                .exposedHeaders("Authorization")
+                .allowCredentials(false);
     }
 }
