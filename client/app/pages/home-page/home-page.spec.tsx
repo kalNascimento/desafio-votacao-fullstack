@@ -1,31 +1,31 @@
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { Welcome } from '~/home-page/welcome'
+import { HomePage } from './home-page'
 
-describe('Welcome component', () => {
+describe('HomePage component', () => {
 
   test('deve renderizar o texto "What\'s next?"', () => {
-    render(<Welcome />)
+    render(<HomePage />)
 
     expect(screen.getByText("What's next?")).toBeInTheDocument()
   })
 
   test('deve renderizar os links de recursos', () => {
-    render(<Welcome />)
+    render(<HomePage />)
 
     expect(screen.getByText('React Router Docs')).toBeInTheDocument()
     expect(screen.getByText('Join Discord')).toBeInTheDocument()
   })
 
   test('deve renderizar imagens com alt "React Router"', () => {
-    render(<Welcome />)
+    render(<HomePage />)
 
     const images = screen.getAllByAltText('React Router')
     expect(images.length).toBeGreaterThan(0)
   })
 
   test('links devem ter href correto', () => {
-    render(<Welcome />)
+    render(<HomePage />)
 
     const docsLink = screen.getByText('React Router Docs').closest('a')
     const discordLink = screen.getByText('Join Discord').closest('a')
