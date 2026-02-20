@@ -2,6 +2,7 @@ package br.com.desafios.kalnascimento.api_votacao.domain.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,4 +25,6 @@ public class Pauta extends BaseEntity {
     @Column(name = "descricao", length = 150)
     private String descricao;
 
+    @OneToOne(mappedBy = "pauta")
+    private SessaoVotacao sessaoVotacao;
 }

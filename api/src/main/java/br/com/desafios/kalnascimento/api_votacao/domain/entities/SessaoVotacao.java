@@ -28,7 +28,7 @@ import lombok.experimental.SuperBuilder;
 public class SessaoVotacao extends BaseEntity {
 
     @OneToOne
-    @JoinColumn(name = "id_pauta", nullable = false, unique = true, foreignKey = @ForeignKey(name = "fk_pauta"))
+    @JoinColumn(name = "id_pauta", nullable = false, unique = true)
     private Pauta pauta;
 
     @Column(name = "voto_vencedor", length = 20)
@@ -41,5 +41,4 @@ public class SessaoVotacao extends BaseEntity {
 
     @Column(name = "data_hora_finalizacao", nullable = false)
     private LocalDateTime dataHoraFinalizacao;
-
 }
