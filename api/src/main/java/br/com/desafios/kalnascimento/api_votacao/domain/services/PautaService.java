@@ -28,7 +28,7 @@ public class PautaService {
     }
 
     public List<PautaComboResponseDto> listarPautasCombo() {
-        return pautaRepository.findAll().stream()
+        return pautaRepository.findBySessaoVotacaoIsNull().stream()
                 .map(pautaMapper::toDto)
                 .toList();
     }
