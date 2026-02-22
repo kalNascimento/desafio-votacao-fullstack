@@ -9,6 +9,14 @@ export function criarSessao(payload: CriarSessaoVotacaoRequest): Promise<void> {
   return api.post("/sessao-votacao", payload);
 }
 
+export function finalizarSessao(id: string): Promise<void> {
+  return api.patch("/sessao-votacao/finalizar/" + id);
+}
+
 export function listarSessao(payload: PageRequest): Promise<AxiosResponse<PageResponse<SessaoVotacaoResponse>>> {
   return api.get<PageResponse<SessaoVotacaoResponse>>("/sessao-votacao", { params: payload });
+}
+
+export function obterSessao(id: string): Promise<AxiosResponse<SessaoVotacaoResponse>> {
+  return api.get<SessaoVotacaoResponse>("/sessao-votacao/" + id);
 }

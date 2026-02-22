@@ -32,7 +32,7 @@ public class VotoService {
         var sessao = sessaoVotacaoRepository.findById(dto.idSessao())
                 .orElseThrow(() -> new EntityNotFoundException("Sessao votação não encontrada"));
 
-        sessaoVotacaoValidator.sessaoFinalizada(sessao.getId());
+        sessaoVotacaoValidator.sessaoFinalizada(sessao);
 
         var associado = associadoRepository.findByCpf(dto.associado().cpf())
                 .orElse(Associado.builder()

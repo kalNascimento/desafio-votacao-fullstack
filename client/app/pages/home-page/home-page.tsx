@@ -5,16 +5,20 @@ import { useEffect, useState } from "react";
 import { criarPauta } from "~/services/pauta.service";
 import { FormCriarPauta } from '~/components/layout/form-criar-pauta';
 import { FormCriarSessao } from '~/components/layout/form-criar-sessao';
-import { criarSessao, listarSessao } from '~/services/sessao.service';
+import { criarSessao, finalizarSessao, listarSessao, obterSessao } from '~/services/sessao.service';
 import { TableColumn } from '~/types/table-column';
 import { SessaoVotacaoResponse } from '~/types/sessao-votacao.response';
 import { CriarSessaoVotacaoRequest } from '~/types/criar-sessao-votacao.request';
 import { CriarPautaRequest } from '~/types/criar-pauta.request';
+import { Modal } from '~/components/ui/modal';
+import { getStatusLabel } from '~/enums/sessao-status.enum';
 
 export function HomePage() {
   const [openPauta, setOpenPauta] = useState(false);
   const [openSessao, setOpenSessao] = useState(false);
+  const [openVisualizar, setOpenVisualizar] = useState(false);
   const [sessoes, setSessoes] = useState<SessaoVotacaoResponse[]>([])
+  const [sessaoDetalhe, setSessaoDetalhes] = useState<SessaoVotacaoResponse>();
 
   useEffect(() => {
     listarSessao({ page: 0, size: 10 }).then(res => setSessoes(res.data.content))
@@ -32,6 +36,17 @@ export function HomePage() {
     setOpenSessao(false);
   }
 
+  async function handleFinalizar(id: string) {
+    await finalizarSessao(id);
+    listarSessao({ page: 0, size: 10 }).then(res => setSessoes(res.data.content))
+  }
+
+  async function handleSessaoDetalhes(id: string) {
+    await obterSessao(id).then(res => setSessaoDetalhes(res.data));
+
+    setOpenVisualizar(true);
+  }
+
   const columns: TableColumn<SessaoVotacaoResponse>[] = [
     {
       key: "pauta.id",
@@ -42,20 +57,49 @@ export function HomePage() {
     {
       key: "pauta.nome",
       header: "Nome",
-      className: "col-span-2 text-left",
+      className: "col-span-1 text-left",
       render: (row) => row.pauta.nome,
     },
     {
       key: "pauta.descricao",
       header: "Descrição",
-      className: "col-span-4 text-left",
+      className: "col-span-3 text-left",
       render: (row) => row.pauta.descricao,
+    },
+    {
+      key: "visualizar",
+      header: "Visualizar",
+      className: "col-span-2 justify-center",
+      render: (row) => <div>
+        <Button type="button" variant="secondary" onClick={() => handleSessaoDetalhes(row.id)}>
+          Detalhes
+        </Button>
+        {sessaoDetalhe?.id === row.id && (
+          <Modal isVisible={openVisualizar} onClose={() => setOpenVisualizar(false)}>
+            <div>
+              {getStatusLabel(sessaoDetalhe.status)} - {
+                new Date(sessaoDetalhe.dataHoraFinalizacao).toLocaleString("pt-BR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                })
+              } - Vencedor: {sessaoDetalhe.votoVencedor}
+            </div>
+          </Modal>
+        )}
+      </div>
     },
     {
       key: "acoes",
       header: "Ações",
       className: "col-span-2 justify-center",
-      render: () => <Button type="button">Votar</Button>,
+      render: (row) => <div className='flex gap-2'>
+        <Button type="button">Votar</Button>
+        <Button type="button" onClick={() => handleFinalizar(row.id)} variant="danger">Finalizar</Button>,
+      </div>
     },
   ];
 

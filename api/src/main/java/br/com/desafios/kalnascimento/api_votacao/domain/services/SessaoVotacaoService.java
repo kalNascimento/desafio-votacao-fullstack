@@ -3,6 +3,7 @@ package br.com.desafios.kalnascimento.api_votacao.domain.services;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import br.com.desafios.kalnascimento.api_votacao.infra.handlers.exceptions.RegraNegocioException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -50,12 +51,27 @@ public class SessaoVotacaoService {
         var sessao = sessaoVotacaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sessao votação não encontrada"));
 
-        sessaoVotacaoValidator.sessaoFinalizada(sessao.getId());
+        sessaoVotacaoValidator.sessaoFinalizada(sessao);
+        sessaoVotacaoValidator.sessaoPodeFinalizar(sessao);
 
         sessao.setStatus(SessaoVotacaoStatusEnum.FINALIZADA);
         sessao.setVotoVencedor(getVotoVencedor(sessao.getPauta()));
 
         sessaoVotacaoRepository.save(sessao);
+    }
+
+    public SessaoVotacaoResponseDto obterSessaoVotacao(UUID id) {
+        var sessao = sessaoVotacaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sessão não encontrada"));
+
+        if (!sessao.getDataHoraFinalizacao().isAfter(LocalDateTime.now())) {
+            sessao.setStatus(SessaoVotacaoStatusEnum.FINALIZADA);
+            sessao.setVotoVencedor(getVotoVencedor(sessao.getPauta()));
+
+            sessaoVotacaoRepository.save(sessao);
+        }
+
+        return  sessaoVotacaoMapper.toDto(sessao);
     }
 
     private VotoEnum getVotoVencedor(Pauta pauta) {

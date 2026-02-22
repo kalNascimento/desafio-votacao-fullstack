@@ -101,4 +101,26 @@ public class SessaoVotacaoController implements BaseController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Operation(
+            summary = "Obter sessão de votação.",
+            description = "Obter dados de uma sessão de votação."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Obter dados detalhados de uma sessão de votação.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = SessaoVotacaoResponseDto.class)
+                    )
+            ),
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<SessaoVotacaoResponseDto> listarSessoesVotacao(@PathVariable UUID id) {
+
+        var response = sessaoVotacaoService.obterSessaoVotacao(id);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
