@@ -52,7 +52,6 @@ public class SessaoVotacaoService {
                 .orElseThrow(() -> new EntityNotFoundException("Sessao votação não encontrada"));
 
         sessaoVotacaoValidator.sessaoFinalizada(sessao);
-        sessaoVotacaoValidator.sessaoPodeFinalizar(sessao);
 
         sessao.setStatus(SessaoVotacaoStatusEnum.FINALIZADA);
         sessao.setVotoVencedor(getVotoVencedor(sessao.getPauta()));

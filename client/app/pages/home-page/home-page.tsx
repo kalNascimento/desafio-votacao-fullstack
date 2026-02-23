@@ -12,13 +12,18 @@ import { CriarSessaoVotacaoRequest } from '~/types/criar-sessao-votacao.request'
 import { CriarPautaRequest } from '~/types/criar-pauta.request';
 import { Modal } from '~/components/ui/modal';
 import { getStatusLabel } from '~/enums/sessao-status.enum';
+import { VotoRequest } from '~/types/voto.request';
+import { votar } from '~/services/voto.service';
+import { FormVotar } from '~/components/layout/form-votar';
 
 export function HomePage() {
   const [openPauta, setOpenPauta] = useState(false);
   const [openSessao, setOpenSessao] = useState(false);
   const [openVisualizar, setOpenVisualizar] = useState(false);
+  const [openVotar, setOpenVotar] = useState(false);
   const [sessoes, setSessoes] = useState<SessaoVotacaoResponse[]>([])
   const [sessaoDetalhe, setSessaoDetalhes] = useState<SessaoVotacaoResponse>();
+  const [idSessaoVoto, setIdSessaoVoto] = useState<string>();
 
   useEffect(() => {
     listarSessao({ page: 0, size: 10 }).then(res => setSessoes(res.data.content))
@@ -45,6 +50,10 @@ export function HomePage() {
     await obterSessao(id).then(res => setSessaoDetalhes(res.data));
 
     setOpenVisualizar(true);
+  }
+
+  async function handleVotas(payload: VotoRequest) {
+    await votar(payload);
   }
 
   const columns: TableColumn<SessaoVotacaoResponse>[] = [
@@ -97,8 +106,13 @@ export function HomePage() {
       header: "Ações",
       className: "col-span-2 justify-center",
       render: (row) => <div className='flex gap-2'>
-        <Button type="button">Votar</Button>
-        <Button type="button" onClick={() => handleFinalizar(row.id)} variant="danger">Finalizar</Button>,
+        <Button type="button" onClick={() => {
+          setOpenVotar(true);
+          setIdSessaoVoto(row.id);
+        }}>Votar</Button>
+        <Button type="button" onClick={() => handleFinalizar(row.id)} variant="danger">
+          Finalizar
+        </Button>
       </div>
     },
   ];
@@ -139,6 +153,17 @@ export function HomePage() {
       </h2>
 
       <Table columns={columns} data={sessoes} />
+
+      {
+        idSessaoVoto
+        && <Modal
+          children={<FormVotar
+            onSubmit={handleVotas}
+            onCancel={() => setOpenVotar(false)}
+            idSessao={idSessaoVoto} />}
+          isVisible={openVotar}
+          onClose={() => setOpenVotar(false)} />
+      }
     </main>
   );
 }
