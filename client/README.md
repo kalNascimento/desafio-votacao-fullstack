@@ -1,87 +1,128 @@
-# Welcome to React Router!
+# Projeto Next.js
 
-A modern, production-ready template for building full-stack React applications using React Router.
+Aplicação construída com **Next.js** pronta para desenvolvimento e
+produção.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+------------------------------------------------------------------------
 
-## Features
+## Pré-requisitos
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+Antes de começar, você precisa ter instalado:
 
-## Getting Started
+-   Node.js (recomendado \>= 18)
+-   npm, yarn ou pnpm
 
-### Installation
+Verifique as versões:
 
-Install the dependencies:
+``` bash
+node -v
+npm -v
+```
 
-```bash
+------------------------------------------------------------------------
+
+## Configuração do ambiente
+
+### Clone o repositório
+
+``` bash
+git clone <URL_DO_REPOSITORIO>
+cd <NOME_DO_PROJETO>
+```
+
+### Instale as dependências
+
+``` bash
 npm install
 ```
 
-### Development
+ou
 
-Start the development server with HMR:
+``` bash
+yarn install
+```
 
-```bash
+ou
+
+``` bash
+pnpm install
+```
+
+------------------------------------------------------------------------
+
+## Variáveis de ambiente
+
+O projeto utiliza variáveis de ambiente.
+
+### Copie o arquivo de exemplo (se existir):
+
+``` bash
+cp .env.example .env
+```
+
+### Ou crie manualmente o `.env` na raiz do projeto
+
+Exemplo:
+
+``` env
+VITE_API_URL=http://localhost:8080
+```
+
+Ajuste conforme necessário para seu ambiente.
+
+------------------------------------------------------------------------
+
+## Rodando em desenvolvimento
+
+``` bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+A aplicação estará disponível em:
 
-## Building for Production
+http://localhost:3000
 
-Create a production build:
+------------------------------------------------------------------------
 
-```bash
+## Build para produção
+
+``` bash
 npm run build
 ```
 
-## Deployment
+------------------------------------------------------------------------
 
-### Docker Deployment
+## Rodar em produção
 
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+``` bash
+npm start
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+------------------------------------------------------------------------
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+## Lint
 
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+``` bash
+npm run lint
 ```
 
-## Styling
+------------------------------------------------------------------------
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+## Scripts disponíveis
 
----
+-   `dev` → roda em modo desenvolvimento
+-   `build` → cria build de produção
+-   `start` → inicia servidor em produção
+-   `lint` → verifica padrões de código
 
-Built with ❤️ using React Router.
+------------------------------------------------------------------------
+
+## Contribuição
+
+Sinta-se à vontade para abrir issues ou pull requests com melhorias.
+
+------------------------------------------------------------------------
+
+## Licença
+
+Este projeto está sob a licença MIT.
