@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../ui/button';
 
-interface FormDataCriarPauta {
+export interface FormDataCriarPauta {
   nome: string;
   descricao: string;
 };
